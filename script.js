@@ -18,21 +18,51 @@
         const contactInfo = document.querySelector('.contact-info');
         const contactFormElement = document.querySelector('.contact-form');
 
-        // Mobile Menu Toggle
-        mobileMenuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            mobileMenuBtn.innerHTML = navLinks.classList.contains('active') 
-                ? '<i class="fas fa-times"></i>' 
-                : '<i class="fas fa-bars"></i>';
-        });
-
-        // Close mobile menu when clicking a link
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
+        // Mobile Menu Toggle (robust + accessible)
+        if (mobileMenuBtn && navLinks) {
+            const closeMobileMenu = () => {
                 navLinks.classList.remove('active');
-                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                navLinks.setAttribute('aria-hidden', 'true');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars" aria-hidden="true"></i>';
+            };
+
+            const openMobileMenu = () => {
+                navLinks.classList.add('active');
+                navLinks.setAttribute('aria-hidden', 'false');
+                mobileMenuBtn.setAttribute('aria-expanded', 'true');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-times" aria-hidden="true"></i>';
+            };
+
+            mobileMenuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (navLinks.classList.contains('active')) {
+                    closeMobileMenu();
+                } else {
+                    openMobileMenu();
+                }
             });
-        });
+
+            // Close when clicking any nav link
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', closeMobileMenu);
+            });
+
+            // Close when clicking outside the menu
+            document.addEventListener('click', (ev) => {
+                if (!navLinks.contains(ev.target) && !mobileMenuBtn.contains(ev.target)) {
+                    closeMobileMenu();
+                }
+            });
+
+            // Close on Escape
+            document.addEventListener('keydown', (ev) => {
+                if (ev.key === 'Escape') closeMobileMenu();
+            });
+        } else {
+            // graceful fallback for unexpected DOM changes
+            console.warn('Mobile menu: required elements not found.');
+        }
 
         // Header scroll effect
         window.addEventListener('scroll', () => {

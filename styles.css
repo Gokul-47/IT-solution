@@ -73,6 +73,16 @@
             align-items: center;
             gap: 10px;
             text-decoration: none;
+            max-width: 100%;
+        }
+
+        /* ensure the actual logo image is constrained and responsive */
+        .logo img {
+            display: block;
+            height: 44px;         /* default header logo height */
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
         }
 
         .logo-icon {
@@ -92,10 +102,22 @@
             font-size: 24px;
             font-weight: 800;
             color: var(--dark-color);
+            white-space: nowrap;
         }
 
         .logo-text span {
             color: var(--primary-color);
+        }
+
+        /* responsive adjustments */
+        @media (max-width: 600px) {
+            .logo img { height: 36px; }
+            .logo-text { font-size: 18px; }
+        }
+
+        @media (max-width: 400px) {
+            .logo img { height: 30px; }
+            .logo-text { display: none; } /* keep header compact on very small screens */
         }
 
         .nav-links {
@@ -725,6 +747,8 @@
         @media (max-width: 768px) {
             .mobile-menu-btn {
                 display: block;
+                position: relative;
+                z-index: 1100; /* ensure button is above header content */
             }
             
             .nav-links {
@@ -740,7 +764,7 @@
                 transform: translateY(-100%);
                 opacity: 0;
                 transition: var(--transition);
-                z-index: 999;
+                z-index: 1001; /* must be above header (1000) */
             }
             
             .nav-links.active {
