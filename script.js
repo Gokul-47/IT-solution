@@ -1,552 +1,220 @@
+// DOM Elements
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+        const header = document.getElementById('header');
+        const notFoundPage = document.getElementById('notFoundPage');
+        const goHomeBtn = document.getElementById('goHome');
+        const contactForm = document.getElementById('contactForm');
+        const externalLinks = document.querySelectorAll('.external-link');
+        const sectionTitles = document.querySelectorAll('.section-title');
+        const serviceCards = document.querySelectorAll('.service-card');
+        const aboutText = document.querySelector('.about-text');
+        const aboutImage = document.querySelector('.about-image');
+        const statCards = document.querySelectorAll('.stat-card');
+        const steps = document.querySelectorAll('.step');
+        const portfolioItems = document.querySelectorAll('.portfolio-item');
+        const testimonial = document.querySelector('.testimonial');
+        const teamMembers = document.querySelectorAll('.team-member');
+        const contactInfo = document.querySelector('.contact-info');
+        const contactFormElement = document.querySelector('.contact-form');
 
-function createParticles() {
-    const particleContainer = document.getElementById('particles');
-    if (!particleContainer) return;
-
-    const particleCount = window.innerWidth < 768 ? 30 : 50;
-
-    for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        
-        const size = Math.random() * 4 + 2;
-        const startX = Math.random() * window.innerWidth;
-        const delay = Math.random() * 15;
-        const duration = Math.random() * 10 + 10;
-        
-        particle.style.width = `${size}px`;
-        particle.style.height = `${size}px`;
-        particle.style.left = `${startX}px`;
-        particle.style.bottom = '0';
-        particle.style.animationDelay = `${delay}s`;
-        particle.style.animationDuration = `${duration}s`;
-        
-        particleContainer.appendChild(particle);
-    }
-}
-
-// ================================
-// Navigation Scroll Effect
-// ================================
-function handleNavScroll() {
-    const navbar = document.getElementById('navbar');
-    if (!navbar) return;
-
-    if (window.scrollY > 50) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
-    }
-}
-
-// ================================
-// Mobile Menu Toggle
-// ================================
-function setupMobileMenu() {
-    const hamburger = document.getElementById('hamburger');
-    const navMenu = document.getElementById('navMenu');
-    
-    if (!hamburger || !navMenu) return;
-
-    hamburger.addEventListener('click', () => {
-        hamburger.classList.toggle('active');
-        navMenu.classList.toggle('active');
-    });
-
-    // Close menu when clicking on a link
-    const navLinks = navMenu.querySelectorAll('.nav-link, .nav-btn');
-    navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            hamburger.classList.remove('active');
-            navMenu.classList.remove('active');
+        // Mobile Menu Toggle
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            mobileMenuBtn.innerHTML = navLinks.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
         });
-    });
 
-    // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
-            hamburger.classList.remove('active');
-            navMenu.classList.remove('active');
-        }
-    });
-}
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
 
-// ================================
-// Counter Animation for Stats
-// ================================
-function animateCounter(element, target, duration = 2000) {
-    const start = 0;
-    const increment = target / (duration / 16);
-    let current = start;
-
-    const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-            element.textContent = Math.floor(target);
-            clearInterval(timer);
-        } else {
-            element.textContent = Math.floor(current);
-        }
-    }, 16);
-}
-
-function handleCounterAnimation() {
-    const counters = document.querySelectorAll('.stat-number');
-    const observerOptions = {
-        threshold: 0.5,
-        rootMargin: '0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
-                const target = parseInt(entry.target.getAttribute('data-count'));
-                animateCounter(entry.target, target);
-                entry.target.classList.add('counted');
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
             }
+            
+            // Trigger animations when elements come into view
+            triggerAnimations();
         });
-    }, observerOptions);
 
-    counters.forEach(counter => observer.observe(counter));
-}
-
-// ================================
-// Scroll Reveal Animation
-// ================================
-function setupScrollReveal() {
-    const revealElements = document.querySelectorAll('.service-card, .feature-item, .testimonial-card');
-    
-    revealElements.forEach(el => {
-        el.classList.add('scroll-reveal');
-    });
-
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry, index) => {
-            if (entry.isIntersecting) {
-                setTimeout(() => {
-                    entry.target.classList.add('active');
-                }, index * 100);
-            }
+        // 404 Page for External Links
+        externalLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                notFoundPage.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            });
         });
-    }, observerOptions);
 
-    revealElements.forEach(el => observer.observe(el));
-}
-
-// ================================
-// Back to Top Button
-// ================================
-function setupBackToTop() {
-    const backToTopBtn = document.getElementById('backToTop');
-    if (!backToTopBtn) return;
-
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 300) {
-            backToTopBtn.classList.add('show');
-        } else {
-            backToTopBtn.classList.remove('show');
-        }
-    });
-
-    backToTopBtn.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
+        // Go Home from 404 Page
+        goHomeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            notFoundPage.classList.remove('show');
+            document.body.style.overflow = 'auto';
         });
-    });
-}
 
-// ================================
-// Form Submission Handler
-// ================================
-function setupForms() {
-    // Contact Form
-    const contactForm = document.querySelector('.contact-form');
-    if (contactForm) {
+        // Contact Form Submission
         contactForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            
-            // Get form data
-            const formData = new FormData(contactForm);
-            const data = Object.fromEntries(formData);
-            
-            // Show success animation
-            showNotification('Message sent successfully! We\'ll get back to you soon.', 'success');
-            
-            // Reset form
+            alert('Thank you for your message! We will get back to you soon.');
             contactForm.reset();
         });
-    }
 
-    // Newsletter Form
-    const newsletterForm = document.querySelector('.newsletter-form');
-    if (newsletterForm) {
-        newsletterForm.addEventListener('submit', (e) => {
-            e.preventDefault();
+        // Animation on scroll
+        function triggerAnimations() {
+            // Section titles
+            sectionTitles.forEach(title => {
+                const rect = title.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.85) {
+                    title.classList.add('visible');
+                }
+            });
             
-            showNotification('Thank you for subscribing to our newsletter!', 'success');
+            // Service cards
+            serviceCards.forEach((card, index) => {
+                const rect = card.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.85) {
+                    setTimeout(() => {
+                        card.classList.add('visible');
+                    }, index * 150);
+                }
+            });
             
-            newsletterForm.reset();
-        });
-    }
-}
-
-// ================================
-// Notification System
-// ================================
-function showNotification(message, type = 'success') {
-    // Remove existing notifications
-    const existingNotification = document.querySelector('.notification');
-    if (existingNotification) {
-        existingNotification.remove();
-    }
-
-    // Create notification
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <div class=\"notification-content\">
-            <i class=\"fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}\"></i>
-            <span>${message}</span>
-        </div>
-    `;
-
-    // Add styles
-    notification.style.cssText = `
-        position: fixed;
-        top: 100px;
-        right: 30px;
-        background: ${type === 'success' ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #ef4444, #dc2626)'};
-        color: white;
-        padding: 1rem 1.5rem;
-        border-radius: 12px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        z-index: 10000;
-        animation: slideInRight 0.3s ease;
-        backdrop-filter: blur(10px);
-    `;
-
-    document.body.appendChild(notification);
-
-    // Auto remove after 3 seconds
-    setTimeout(() => {
-        notification.style.animation = 'slideOutRight 0.3s ease';
-        setTimeout(() => notification.remove(), 300);
-    }, 3000);
-}
-
-// Add notification animations
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideInRight {
-        from {
-            opacity: 0;
-            transform: translateX(100px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-
-    @keyframes slideOutRight {
-        from {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        to {
-            opacity: 0;
-            transform: translateX(100px);
-        }
-    }
-
-    .notification-content {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-weight: 600;
-    }
-
-    .notification-content i {
-        font-size: 20px;
-    }
-
-    @media (max-width: 768px) {
-        .notification {
-            right: 15px !important;
-            left: 15px !important;
-            top: 80px !important;
-        }
-    }
-`;
-document.head.appendChild(style);
-
-// ================================
-// Smooth Scrolling for Anchor Links
-// ================================
-function setupSmoothScroll() {
-    document.querySelectorAll('a[href^=\"#\"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            const href = this.getAttribute('href');
-            if (href === '#' || href === '') return;
-
-            const target = document.querySelector(href);
-            if (target) {
-                e.preventDefault();
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+            // About section
+            if (aboutText) {
+                const rect = aboutText.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.85) {
+                    aboutText.classList.add('visible');
+                    aboutImage.classList.add('visible');
+                }
             }
-        });
-    });
-}
-
-// ================================
-// Mouse Parallax Effect
-// ================================
-function setupParallax() {
-    const heroVisual = document.querySelector('.hero-visual');
-    if (!heroVisual || window.innerWidth < 768) return;
-
-    document.addEventListener('mousemove', (e) => {
-        const mouseX = (e.clientX / window.innerWidth) - 0.5;
-        const mouseY = (e.clientY / window.innerHeight) - 0.5;
-
-        const floatingCards = document.querySelectorAll('.floating-card');
-        floatingCards.forEach((card, index) => {
-            const speed = (index + 1) * 10;
-            const x = mouseX * speed;
-            const y = mouseY * speed;
             
-            card.style.transform = `translate(${x}px, ${y}px)`;
-        });
-    });
-}
-
-// ================================
-// Service Card Tilt Effect
-// ================================
-function setupCardTilt() {
-    if (window.innerWidth < 768) return;
-
-    const cards = document.querySelectorAll('.service-card');
-    
-    cards.forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            // Stats
+            statCards.forEach((card, index) => {
+                const rect = card.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.85) {
+                    setTimeout(() => {
+                        card.classList.add('visible');
+                    }, index * 150);
+                }
+            });
             
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
+            // Process steps
+            steps.forEach((step, index) => {
+                const rect = step.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.85) {
+                    setTimeout(() => {
+                        step.classList.add('visible');
+                    }, index * 150);
+                }
+            });
             
-            const rotateX = (y - centerY) / 10;
-            const rotateY = (centerX - x) / 10;
+            // Portfolio items
+            portfolioItems.forEach((item, index) => {
+                const rect = item.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.85) {
+                    setTimeout(() => {
+                        item.classList.add('visible');
+                    }, index * 150);
+                }
+            });
             
-            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
-        });
-        
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
-        });
-    });
-}
+            // Testimonial
+            if (testimonial) {
+                const rect = testimonial.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.85) {
+                    testimonial.classList.add('visible');
+                }
+            }
+            
+            // Team members
+            teamMembers.forEach((member, index) => {
+                const rect = member.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.85) {
+                    setTimeout(() => {
+                        member.classList.add('visible');
+                    }, index * 150);
+                }
+            });
+            
+            // Contact section
+            if (contactInfo) {
+                const rect = contactInfo.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.85) {
+                    contactInfo.classList.add('visible');
+                    contactFormElement.classList.add('visible');
+                }
+            }
+        }
 
-// ================================
-// Cursor Trail Effect (Desktop Only)
-// ================================
-function setupCursorTrail() {
-    if (window.innerWidth < 768 || 'ontouchstart' in window) return;
+        // Testimonial Slider
+        let currentTestimonial = 0;
+        const testimonials = [
+            {
+                text: "Stackly transformed our outdated IT infrastructure into a modern, cloud-based system that improved our operational efficiency by 40%. Their team was professional, knowledgeable, and delivered beyond our expectations.",
+                name: "Michael Rodriguez",
+                position: "CTO, TechForward Inc.",
+                image: "https://randomuser.me/api/portraits/men/32.jpg"
+            },
+            {
+                text: "The mobile application developed by Stackly has significantly improved our customer engagement. Their attention to detail and user experience focus resulted in a product that our customers love to use.",
+                name: "Jennifer Lee",
+                position: "Product Manager, RetailPlus",
+                image: "https://randomuser.me/api/portraits/women/26.jpg"
+            },
+            {
+                text: "We partnered with Stackly for our cybersecurity needs, and their thorough assessment identified vulnerabilities we didn't even know existed. Their proactive approach has given us peace of mind.",
+                name: "Robert Johnson",
+                position: "Security Director, Global Finance Corp",
+                image: "https://randomuser.me/api/portraits/men/54.jpg"
+            }
+        ];
 
-    const cursor = document.createElement('div');
-    cursor.className = 'cursor-trail';
-    cursor.style.cssText = `
-        position: fixed;
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(99, 102, 241, 0.5), transparent);
-        pointer-events: none;
-        z-index: 9999;
-        transition: transform 0.15s ease;
-        mix-blend-mode: screen;
-    `;
-    document.body.appendChild(cursor);
-
-    let mouseX = 0;
-    let mouseY = 0;
-    let cursorX = 0;
-    let cursorY = 0;
-
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-    });
-
-    function animateCursor() {
-        cursorX += (mouseX - cursorX) * 0.15;
-        cursorY += (mouseY - cursorY) * 0.15;
-        
-        cursor.style.left = cursorX + 'px';
-        cursor.style.top = cursorY + 'px';
-        
-        requestAnimationFrame(animateCursor);
-    }
-    animateCursor();
-
-    // Scale cursor on interactive elements
-    const interactiveElements = document.querySelectorAll('a, button, .service-card, .testimonial-card');
-    interactiveElements.forEach(el => {
-        el.addEventListener('mouseenter', () => {
-            cursor.style.transform = 'scale(2)';
-        });
-        el.addEventListener('mouseleave', () => {
-            cursor.style.transform = 'scale(1)';
-        });
-    });
-}
-
-// ================================
-// Tech Stack Rotation Animation
-// ================================
-function setupTechStackAnimation() {
-    const techItems = document.querySelectorAll('.tech-item');
-    
-    techItems.forEach(item => {
-        item.addEventListener('mouseenter', () => {
-            item.style.animation = 'none';
+        function rotateTestimonial() {
+            currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+            const testimonialData = testimonials[currentTestimonial];
+            
+            testimonial.classList.remove('active');
+            
             setTimeout(() => {
-                item.style.animation = '';
-            }, 10);
+                testimonial.innerHTML = `
+                    <p>"${testimonialData.text}"</p>
+                    <div class="client-info">
+                        <div class="client-avatar">
+                            <img src="${testimonialData.image}" alt="Client">
+                        </div>
+                        <div>
+                            <h4>${testimonialData.name}</h4>
+                            <p>${testimonialData.position}</p>
+                        </div>
+                    </div>
+                `;
+                testimonial.classList.add('active');
+            }, 400);
+        }
+
+        // Auto-rotate testimonials every 5 seconds
+        setInterval(rotateTestimonial, 5000);
+
+        // Trigger initial animations
+        window.addEventListener('load', () => {
+            triggerAnimations();
+            
+            // Initial fade-in for hero elements
+            setTimeout(() => {
+                document.querySelector('.hero-text').style.animationPlayState = 'running';
+            }, 300);
+            
+            setTimeout(() => {
+                document.querySelector('.hero-image').style.animationPlayState = 'running';
+            }, 600);
         });
-    });
-}
-
-// ================================
-// Loading Animation
-// ================================
-function setupPageLoad() {
-    // Add fade-in animation to body
-    document.body.style.opacity = '0';
-    document.body.style.transition = 'opacity 0.5s ease';
-    
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            document.body.style.opacity = '1';
-        }, 100);
-    });
-}
-
-// ================================
-// Prevent Form Resubmission
-// ================================
-function preventFormResubmit() {
-    if (window.history.replaceState) {
-        window.history.replaceState(null, null, window.location.href);
-    }
-}
-
-// ================================
-// Initialize All Features
-// ================================
-function init() {
-    // Setup page load animation
-    setupPageLoad();
-    
-    // Create particle effects
-    createParticles();
-    
-    // Setup navigation
-    handleNavScroll();
-    setupMobileMenu();
-    
-    // Setup animations
-    handleCounterAnimation();
-    setupScrollReveal();
-    setupParallax();
-    setupCardTilt();
-    setupTechStackAnimation();
-    setupCursorTrail();
-    
-    // Setup interactive elements
-    setupBackToTop();
-    setupForms();
-    setupSmoothScroll();
-    
-    // Prevent form resubmit
-    preventFormResubmit();
-    
-    // Add scroll listener
-    window.addEventListener('scroll', handleNavScroll);
-    
-    // Reinitialize on resize (for responsive changes)
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-            // Only reinitialize specific features that need it
-            if (window.innerWidth < 768) {
-                const cursor = document.querySelector('.cursor-trail');
-                if (cursor) cursor.remove();
-            }
-        }, 250);
-    });
-}
-
-// ================================
-// Start Everything When DOM is Ready
-// ================================
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-} else {
-    init();
-}
-
-// ================================
-// Performance Optimization
-// ================================
-// Debounce function for scroll events
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// Lazy load images if any are added later
-function setupLazyLoad() {
-    const images = document.querySelectorAll('img[data-src]');
-    
-    const imageObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.dataset.src;
-                img.removeAttribute('data-src');
-                imageObserver.unobserve(img);
-            }
-        });
-    });
-    
-    images.forEach(img => imageObserver.observe(img));
-}
-
-setupLazyLoad();
-
-// ================================
-// Console Welcome Message
-// ================================
-console.log('%c👋 Welcome to Stackly IT Services!', 'color: #6366f1; font-size: 20px; font-weight: bold;');
-console.log('%cBuilt with passion and cutting-edge technology', 'color: #8b5cf6; font-size: 14px;');
-console.log('%cVisit us at: https://stacklyit.com', 'color: #ec4899; font-size: 12px;');
