@@ -19,15 +19,28 @@
         const contactFormElement = document.querySelector('.contact-form');
 
         // Mobile Menu Toggle (robust + accessible)
-        if (mobileMenuBtn && navLinks) {
+        if (mobileMenuBtn && navLinks && header) {
+            const updateNavPosition = () => {
+                const rect = header.getBoundingClientRect();
+                // Use header bottom to position the menu flush against the header.
+                const topPos = Math.max(0, Math.ceil(rect.bottom) - 1); // overlap by 1px to avoid visual gap
+                navLinks.style.top = `${topPos}px`;
+                navLinks.style.maxHeight = `calc(100vh - ${topPos}px)`;
+                // Reduce the nav panel's top padding when it's anchored to the header so it appears flush
+                if (parseInt(navLinks.style.paddingTop || 0, 10) > 8) navLinks.style.paddingTop = '8px';
+            };
+
             const closeMobileMenu = () => {
                 navLinks.classList.remove('active');
                 navLinks.setAttribute('aria-hidden', 'true');
                 mobileMenuBtn.setAttribute('aria-expanded', 'false');
                 mobileMenuBtn.innerHTML = '<i class="fas fa-bars" aria-hidden="true"></i>';
+                navLinks.style.top = '';
+                navLinks.style.maxHeight = '';
             };
 
             const openMobileMenu = () => {
+                updateNavPosition();
                 navLinks.classList.add('active');
                 navLinks.setAttribute('aria-hidden', 'false');
                 mobileMenuBtn.setAttribute('aria-expanded', 'true');
@@ -58,6 +71,14 @@
             // Close on Escape
             document.addEventListener('keydown', (ev) => {
                 if (ev.key === 'Escape') closeMobileMenu();
+            });
+
+            // Recalculate menu position on resize/scroll while open
+            window.addEventListener('resize', () => {
+                if (navLinks.classList.contains('active')) updateNavPosition();
+            });
+            window.addEventListener('scroll', () => {
+                if (navLinks.classList.contains('active')) updateNavPosition();
             });
         } else {
             // graceful fallback for unexpected DOM changes
