@@ -117,7 +117,19 @@
 
         @media (max-width: 400px) {
             .logo img { height: 30px; }
-            .logo-text { display: none; } /* keep header compact on very small screens */
+            /* keep the brand name visible on small screens but compact it */
+            .logo-text {
+                font-size: 14px;
+                max-width: 120px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+
+        /* hide only on ultra-small screens where space is extremely limited */
+        @media (max-width: 280px) {
+            .logo-text { display: none; }
         }
 
         .nav-links {
